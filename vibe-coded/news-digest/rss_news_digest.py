@@ -3,10 +3,7 @@ import asyncio
 import aiohttp
 import feedparser
 from datetime import datetime
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from brevo.api.send_transac_email import SendTransacEmail
-from brevo.api.client import get_api_client
+import sib_api_v3_sdk
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -17,30 +14,77 @@ SENDER_EMAIL = os.getenv("SENDER_EMAIL", "odavi20527@gmail.com")
 RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL", "odavi20527@gmail.com")
 BREVO_API_KEY = os.getenv("BREVO_API_KEY")
 
-# RSS Feeds (International Sources)
+# RSS Feeds (International Sources - Expanded List)
 RSS_FEEDS = [
+    # USA
     {"name": "CNN", "url": "http://rss.cnn.com/rss/edition.rss", "country": "USA"},
-    {"name": "BBC News", "url": "http://feeds.bbci.co.uk/news/rss.xml", "country": "UK"},
-    {"name": "Al Jazeera", "url": "https://www.aljazeera.com/xml/rss/all.xml", "country": "Qatar"},
-    {"name": "Reuters", "url": "https://www.reutersagency.com/feed/?best-topics=news&post_type=best", "country": "UK"},
-    {"name": "The Guardian", "url": "https://www.theguardian.com/uk/rss", "country": "UK"},
-    {"name": "Le Monde", "url": "https://www.lemonde.fr/rss/une.xml", "country": "France"},
-    {"name": "Der Spiegel", "url": "https://www.spiegel.de/schlagzeilen/index.rss", "country": "Germany"},
-    {"name": "El País", "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada", "country": "Spain"},
-    {"name": "Corriere della Sera", "url": "https://www.corriere.it/rss/homepage.xml", "country": "Italy"},
-    {"name": "NHK World", "url": "https://www3.nhk.or.jp/nhkworld/en/news/feeds/rss/news.xml", "country": "Japan"},
-    {"name": "Xinhua", "url": "http://www.xinhuanet.com/english/rss/worldrss.xml", "country": "China"},
-    {"name": "RT", "url": "https://www.rt.com/rss/", "country": "Russia"},
     {"name": "ABC News", "url": "https://abcnews.go.com/abcnews/topstories", "country": "USA"},
     {"name": "Fox News", "url": "https://moxie.foxnews.com/google-publisher/latest.xml", "country": "USA"},
     {"name": "NY Times", "url": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml", "country": "USA"},
     {"name": "Washington Post", "url": "https://feeds.washingtonpost.com/rss/national", "country": "USA"},
+    {"name": "NBC News", "url": "https://www.nbcnews.com/id/3032084/device/news/rss?deviceName=rss&brandingCount=0", "country": "USA"},
+    {"name": "CBS News", "url": "https://www.cbsnews.com/latest/rss/main", "country": "USA"},
+    {"name": "NPR", "url": "https://feeds.npr.org/1001/rss.xml", "country": "USA"},
+    {"name": "Politico", "url": "https://www.politico.com/rss/politics08.xml", "country": "USA"},
+    
+    # UK
+    {"name": "BBC News", "url": "http://feeds.bbci.co.uk/news/rss.xml", "country": "UK"},
+    {"name": "The Guardian", "url": "https://www.theguardian.com/uk/rss", "country": "UK"},
     {"name": "Sky News", "url": "https://news.sky.com/tools/rss", "country": "UK"},
-    {"name": "CBC", "url": "https://www.cbc.ca/cmlink/rss-topstories", "country": "Canada"},
-    {"name": "Sydney Morning Herald", "url": "https://www.smh.com.au/rssfeed/rss_topstories.xml", "country": "Australia"},
+    {"name": "Daily Mail", "url": "https://www.dailymail.co.uk/home/index.rss", "country": "UK"},
+    {"name": "The Telegraph", "url": "https://www.telegraph.co.uk/rss.xml", "country": "UK"},
+    {"name": "Independent", "url": "https://static.independent.co.uk/rss.xml", "country": "UK"},
+    {"name": "Reuters UK", "url": "https://www.reutersagency.com/feed/?best-topics=news&post_type=best", "country": "UK"},
+    
+    # Europe
+    {"name": "Le Monde", "url": "https://www.lemonde.fr/rss/une.xml", "country": "France"},
+    {"name": "Der Spiegel", "url": "https://www.spiegel.de/schlagzeilen/index.rss", "country": "Germany"},
+    {"name": "El País", "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada", "country": "Spain"},
+    {"name": "Corriere della Sera", "url": "https://www.corriere.it/rss/homepage.xml", "country": "Italy"},
+    {"name": "La Repubblica", "url": "https://www.repubblica.it/rss/homepage/rss2.0.xml", "country": "Italy"},
+    {"name": "Euronews", "url": "https://www.euronews.com/rss", "country": "Europe"},
+    {"name": "Deutsche Welle", "url": "https://rss.dw.com/xml/rss-en-all", "country": "Germany"},
+    {"name": "France 24", "url": "https://www.france24.com/en/rss", "country": "France"},
+    {"name": "RT News", "url": "https://www.rt.com/rss/", "country": "Russia"},
+    {"name": "TASS", "url": "https://tass.com/rss/v2.xml", "country": "Russia"},
+    {"name": "Polityka", "url": "https://www.polityka.pl/rss", "country": "Poland"},
+    
+    # Asia
+    {"name": "NHK World", "url": "https://www3.nhk.or.jp/nhkworld/en/news/feeds/rss/news.xml", "country": "Japan"},
+    {"name": "Asahi Shimbun", "url": "https://www.asahi.com/ajw/rss/headline.xml", "country": "Japan"},
+    {"name": "Xinhua", "url": "http://www.xinhuanet.com/english/rss/worldrss.xml", "country": "China"},
+    {"name": "South China Morning Post", "url": "https://www.scmp.com/rss/320729/feed", "country": "Hong Kong"},
     {"name": "Times of India", "url": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms", "country": "India"},
+    {"name": "Hindu", "url": "https://www.thehindu.com/news/national/feeder/default.rss", "country": "India"},
+    {"name": "Korea Herald", "url": "http://www.koreaherald.com/common/rss_xml.php?ct=1", "country": "South Korea"},
+    {"name": "Yonhap", "url": "https://en.yna.co.kr/channel/RSS/index.xml", "country": "South Korea"},
+    {"name": "Bangkok Post", "url": "https://www.bangkokpost.com/rss", "country": "Thailand"},
+    {"name": "Jakarta Post", "url": "https://www.thejakartapost.com/rss", "country": "Indonesia"},
+    
+    # Middle East
+    {"name": "Al Jazeera", "url": "https://www.aljazeera.com/xml/rss/all.xml", "country": "Qatar"},
+    {"name": "Arab News", "url": "https://www.arabnews.com/rss", "country": "Saudi Arabia"},
+    {"name": "Haaretz", "url": "https://www.haaretz.com/cdn/content/rss/export.xml", "country": "Israel"},
+    {"name": "Jerusalem Post", "url": "https://www.jpost.com/rss", "country": "Israel"},
+    {"name": "Daily Star Lebanon", "url": "https://www.dailystar.com.lb/rss.aspx", "country": "Lebanon"},
+    
+    # Americas (Non-US)
+    {"name": "CBC", "url": "https://www.cbc.ca/cmlink/rss-topstories", "country": "Canada"},
+    {"name": "Globe and Mail", "url": "https://www.theglobeandmail.com/rss/", "country": "Canada"},
     {"name": "Globo", "url": "https://g1.globo.com/rss/g1/", "country": "Brazil"},
+    {"name": "Folha de S.Paulo", "url": "https://www1.folha.uol.com.br/rss/folhaemportugues.xml", "country": "Brazil"},
     {"name": "Clarín", "url": "https://www.clarin.com/rss/portada/", "country": "Argentina"},
+    {"name": "La Nación", "url": "https://www.lanacion.com.ar/rss", "country": "Argentina"},
+    {"name": "El Universal", "url": "https://www.eluniversal.com.mx/rss", "country": "Mexico"},
+    {"name": "Reforma", "url": "https://www.reforma.com/rss", "country": "Mexico"},
+    
+    # Africa & Oceania
+    {"name": "Sydney Morning Herald", "url": "https://www.smh.com.au/rssfeed/rss_topstories.xml", "country": "Australia"},
+    {"name": "ABC Australia", "url": "https://www.abc.net.au/news/feed/51120/rss.xml", "country": "Australia"},
+    {"name": "NZ Herald", "url": "https://www.nzherald.co.nz/arc/outboundfeeds/rss/", "country": "New Zealand"},
+    {"name": "News24", "url": "https://www.news24.com/rss", "country": "South Africa"},
+    {"name": "IOL", "url": "https://www.iol.co.za/rss", "country": "South Africa"},
+    {"name": "Daily Nation", "url": "https://www.nation.africa/kenya/rss", "country": "Kenya"},
 ]
 
 async def fetch_feed(session, url, name, country):
@@ -164,17 +208,16 @@ def send_email(html_content):
         return
 
     try:
-        api_client = get_api_client()
-        api_instance = SendTransacEmail(api_client)
+        client = Brevo(api_key=BREVO_API_KEY)
         
-        send_smtp_email = SendTransacEmail(
+        send_smtp_email = SendTransacEmailRequest(
             sender={"email": SENDER_EMAIL, "name": "Punk News Bot"},
             to=[{"email": RECIPIENT_EMAIL}],
             subject="⚡ PUNK NEWS DIGEST // INTERNATIONAL EDITION",
             html_content=html_content
         )
-        
-        api_response = api_instance.send_transac_email(send_smtp_email)
+
+        api_response = client.transactional_emails.send_transac_email(send_smtp_email)
         print(f"✅ Email sent successfully! Message ID: {api_response.message_id}")
         
     except Exception as e:
