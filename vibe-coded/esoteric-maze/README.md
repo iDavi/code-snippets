@@ -1,50 +1,53 @@
-# Labirinto Esotérico (vibe coded)
+# Minecraft-like Voxel Game
 
-Jogo 3D em primeira pessoa, em tela cheia e sem HUD textual, com estética pixelada/ritualística.
+A first-person voxel sandbox game inspired by Minecraft, built with vanilla JavaScript and HTML5 Canvas.
 
-## Como rodar
+## How to Run
 
-Abra `index.html` no navegador.
+Open `index.html` in a browser.
 
-Opcional (servidor local):
+Optional (local server):
 
 ```bash
 cd vibe-coded/esoteric-maze
 python3 -m http.server 8080
 ```
 
-Depois acesse `http://localhost:8080`.
+Then access `http://localhost:8080`.
 
-## Controles
+## Controls
 
-- **WASD / setas**: mover
-- **Mouse**: mirar / olhar
-- **Clique esquerdo**: atirar
-- **Shift**: correr
+- **WASD / Arrow Keys**: Move
+- **Mouse**: Look around
+- **Space**: Jump
+- **Left Click**: Break block
+- **Right Click**: Place block
+- **Shift**: Sprint
+- **1-9**: Select block type
 
-## Objetivo
+## Features
 
-Eliminar todos os inimigos e alcançar a porta final (`E`).
+- Procedurally generated terrain with hills, valleys, and water
+- Multiple block types: Grass, Dirt, Stone, Wood, Leaves, Sand, Water, Brick, Glass
+- Trees generated randomly throughout the world
+- Physics with gravity and collision detection
+- Block breaking and placement system
+- Hotbar UI for block selection
+- Distance fog for depth perception
+- Dynamic sky with sun and animated clouds
 
-### Inimigos (nomes portugueses)
+## World Generation
 
-João, Maria, Tiago, Beatriz, Rui, Inês, Bruno e Sofia.
+The game uses a pseudo-random noise function to generate varied terrain including:
+- Rolling hills and valleys
+- Underground stone layers
+- Dirt and grass surface layers
+- Water bodies at lower elevations
+- Randomly placed trees with wood trunks and leaf canopies
 
-## Teste rápido
+## Building
 
-Para validar a estrutura do mapa e confirmar que a saída é alcançável:
+Explore the world and build your own structures! Select different block types using number keys 1-9, then:
+- Left-click to break blocks
+- Right-click to place blocks on adjacent faces
 
-```bash
-node vibe-coded/esoteric-maze/test-maze.js
-```
-
-## Publicar no GitHub Pages
-
-Este repositório inclui workflow em `.github/workflows/deploy-esoteric-maze-pages.yml`.
-
-Passos:
-
-1. Suba este código para um repositório no GitHub.
-2. Em **Settings → Pages**, configure **Build and deployment** como **GitHub Actions**.
-3. Faça push na branch `main` (ou `master`) com alterações em `vibe-coded/esoteric-maze/**`.
-4. A Action vai publicar o jogo e expor uma URL em `https://<usuario>.github.io/<repo>/`.
