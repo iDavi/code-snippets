@@ -1,6 +1,6 @@
 # Labirinto Esotérico (vibe coded)
 
-Jogo 3D em primeira pessoa com estética pixelada e textura esticada, inspirado na imagem de referência com corredores surreais e atmosfera ritualística.
+Jogo 3D em primeira pessoa, em tela cheia e sem HUD textual, com estética pixelada/ritualística.
 
 ## Como rodar
 
@@ -18,13 +18,17 @@ Depois acesse `http://localhost:8080`.
 ## Controles
 
 - **WASD / setas**: mover
-- **Mouse**: olhar (clique na tela para capturar cursor)
+- **Mouse**: mirar / olhar
+- **Clique esquerdo**: atirar
 - **Shift**: correr
-- **Q / E**: girar sem mouse
 
 ## Objetivo
 
-Navegar pelo labirinto e encontrar a porta final (`E`) para concluir o ritual.
+Eliminar todos os inimigos e alcançar a porta final (`E`).
+
+### Inimigos (nomes portugueses)
+
+João, Maria, Tiago, Beatriz, Rui, Inês, Bruno e Sofia.
 
 ## Teste rápido
 

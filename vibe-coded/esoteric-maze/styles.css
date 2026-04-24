@@ -1,50 +1,25 @@
 :root {
   color-scheme: dark;
-  font-family: "Courier New", monospace;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html,
 body {
   margin: 0;
-  min-height: 100vh;
-  background: radial-gradient(circle at 20% 20%, #1b2125 0%, #0b0f12 60%, #050608 100%);
-  color: #f0ffd2;
-  display: grid;
-  place-items: center;
-  gap: 1rem;
-}
-
-.hud-shell {
-  width: min(960px, 92vw);
-  padding: 0.75rem 1rem;
-  border: 2px solid #f28bcf;
-  background: #0a0d10d4;
-  box-shadow: 0 0 18px #ff5db35e;
-}
-
-.hud-shell h1 {
-  margin: 0 0 0.3rem;
-  font-size: clamp(1rem, 3vw, 1.6rem);
-  letter-spacing: 0.12rem;
-}
-
-.hud-shell p,
-.hud-shell ul {
-  margin: 0.2rem 0;
-  padding-left: 1rem;
-  font-size: clamp(0.76rem, 2vw, 1rem);
-}
-
-#status {
-  color: #ff94af;
-  text-transform: uppercase;
-  letter-spacing: 0.08rem;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #050608;
 }
 
 #game {
-  width: min(960px, 92vw);
+  width: 100vw;
+  height: 100vh;
+  display: block;
   image-rendering: pixelated;
-  border: 3px solid #8fffd9;
-  box-shadow: 0 0 0 3px #0f2d2f, 0 0 24px #66ffd280;
-  background: #0a0d11;
   cursor: crosshair;
+  background: #0a0d11;
 }
