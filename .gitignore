@@ -1,11 +1,5 @@
-```
-# Compiled and build artifacts
-*.pyc
-__pycache__/
-
+```gitignore
 # Dependencies
-venv/
-.venv/
 node_modules/
 
 # Logs and temp files
@@ -22,8 +16,42 @@ node_modules/
 .vscode/
 .idea/
 
-# Build/dist directories
+# Build artifacts
 dist/
 build/
-target/
+*.js.map
+*.min.js
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git/modules/
+.DS_Store
+*.swp
+*~
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
+.coverage*
+htmlcov/
+.cov/
+istanbul/
+.nyc_output/
+coverage/
 ```
